@@ -1,0 +1,97 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-3:198696735120:task-definition/ICG-API-cluster",
+    "containerDefinitions": [
+        {
+            "name": "mnist-api",
+            "image": "198696735120.dkr.ecr.us-east-1.amazonaws.com/icg:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 8000,
+                    "hostPort": 8000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/mnist-api",
+                    "awslogs-region": "ap-northeast-3",
+                    "awslogs-stream-prefix": "mnist-api"
+                }
+            },
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl -sf http://localhost:8000/healthz || exit 1"
+                ],
+                "interval": 15,
+                "timeout": 5,
+                "retries": 3,
+                "startPeriod": 10
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "mnist-api-td",
+    "executionRoleArn": "arn:aws:iam::198696735120:role/mnist-api-exec-role",
+    "networkMode": "awsvpc",
+    "revision": 6,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.container-health-check"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "ecs.capability.extensible-ephemeral-storage"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "runtimePlatform": {
+        "cpuArchitecture": "ARM64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "registeredAt": "2025-10-20T10:20:13.819000+09:00",
+    "registeredBy": "arn:aws:iam::198696735120:user/mukesh",
+    "ephemeralStorage": {
+        "sizeInGiB": 21
+    }
+}

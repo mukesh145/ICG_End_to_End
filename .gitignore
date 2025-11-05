@@ -115,6 +115,5 @@ temp/
 *.key
 *.pem
 *.crt
-*.json
 credentials/
 aws_credentials/
