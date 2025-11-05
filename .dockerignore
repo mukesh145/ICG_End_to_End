@@ -1,0 +1,12 @@
+.git
+.github
+infra
+mlruns
+logs
+data
+deploy
+*.pyc
+__pycache__/
+.env
+docker-compose.yaml
+Dockerfile.airflow
