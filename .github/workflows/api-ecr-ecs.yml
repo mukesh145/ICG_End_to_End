@@ -64,12 +64,14 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./api
-          file: ./api/Dockerfile.api
+          file: ./Dockerfile.api      # file path relative to repo root
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.IMAGE_URI }}:${{ env.IMAGE_TAG }}
             ${{ env.IMAGE_URI }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
 
       - name: Output pushed image
