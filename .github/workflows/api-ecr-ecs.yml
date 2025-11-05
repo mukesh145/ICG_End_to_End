@@ -18,7 +18,7 @@ env:
   ECR_REPO: ${{ vars.ECR_REPO }}
   ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}    
   ECS_SERVICE: ${{ vars.ECS_SERVICE }}    
-  IMAGE_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO }}
+  IMAGE_URI: 198696735120.dkr.ecr.ap-northeast-3.amazonaws.com/icg:latest
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
