@@ -1,0 +1,46 @@
+# ---- Base image ----
+FROM python:3.11-slim
+
+  # Keep logs unbuffered; avoid .pyc
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+  
+  # App defaults (override via ECS task/env)
+ENV MODEL_DIR=/prod_model \
+      MODEL_POLL_SECONDS=120 \
+      TORCH_DEVICE=cpu \
+      PORT=8000 \
+
+  
+  # OS deps for Pillow + healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libjpeg62-turbo zlib1g libpng16-16 libfreetype6 liblcms2-2 libwebp7 \
+      curl \
+   && rm -rf /var/lib/apt/lists/*
+  
+  # Non-root user
+RUN addgroup --system app && adduser --system --ingroup app app
+  
+  # App dir
+WORKDIR /app
+  
+  # Copy reqs first for caching
+COPY requirements/inference.txt /app/requirements.txt
+  
+  # Install deps (CPU-only PyTorch)
+RUN pip install --no-cache-dir --upgrade pip && \
+      pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+  
+COPY --chown=app:app icg/ /app/icg/
+COPY --chown=app:app api/ /app/api/
+  
+USER root
+  
+EXPOSE ${PORT}
+  
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+CMD curl -fsS "http://127.0.0.1:${PORT}/health" || exit 1
+  
+  # Run FastAPI
+CMD uvicorn api.app:app --host 0.0.0.0 --port ${PORT}
+  

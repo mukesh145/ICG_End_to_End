@@ -1,0 +1,98 @@
+# =====================================================
+#  GLOBAL CONFIG FOR FLICKR8K PROJECT (Prep + Train)
+# =====================================================
+
+# ---------------- Paths ----------------
+paths:
+  data_root: "./data/Flickr8k"
+  images_subdir: "Images"
+  captions_file: "captions.txt"
+
+  artifacts_dir: "./data/Flickr8k/artifacts"
+  out:
+    vocab: "vocab.json"
+    train_jsonl: "captions_train.jsonl"
+    val_jsonl: "captions_val.jsonl"
+    test_jsonl: "captions_test.jsonl"
+
+  checkpoints_dir: "./checkpoints"
+
+# ---------------- Device & Backend ----------------
+device:
+  policy: "auto"                # "auto" | "cuda" | "cpu" | "mps"
+  cudnn_benchmark: true
+
+# ---------------- Data Preparation ----------------
+data_prep:
+  # Split sizes
+  train_size: 500
+  val_size: 100
+  test_size: 100
+
+  # Vocab/tokenization
+  min_freq: 2
+  max_vocab_size: null
+
+  # Caption parsing
+  delimiter: ","              # exact delimiter between filename and caption
+  strict_malformed: false
+  image_exts: [".jpg", ".jpeg", ".png"]
+
+  # Reproducibility
+  seed: 1337
+
+# ---------------- Data Loading (for training) ----------------
+loader:
+  batch_size: 64
+  num_workers: 0
+  pin_memory: false
+  shuffle_train: true
+  shuffle_val: false
+
+# ---------------- Model ----------------
+model:
+  d_model: 512
+  nhead: 8
+  num_layers: 6
+  dim_feedforward: 2048
+  dropout: 0.1
+  tie_weights: true
+  encoder_pretrained: true
+
+# ---------------- Training ----------------
+train:
+  epochs: 1
+  grad_accum_steps: 1
+
+optim:
+  lr: 3.0e-4
+  weight_decay: 0.01
+
+sched:
+  warmup_steps: 1000
+
+# ---------------- Early Stopping ----------------
+early_stopping:
+  patience: 3
+  mode: "min"                   # "min" (loss) or "max" (metric)
+
+# ---------------- Reproducibility ----------------
+seed:
+  value: 42
+  deterministic: false
+
+
+# config.yaml
+mlflow:
+  tracking_uri: "http://mlflow:5050"      
+  experiment: "ICG-Project-1.0"
+  artifact_uri: "s3://icg-bucket-mlops/image-caption-generator/"
+  run_name: "train"
+  model_name: "ICG-Captioner-1.0"         
+  register_stage: "Staging"                 
+
+
+sync_cfg:
+  s3_bucket : "icg-bucket-mlops"
+  s3_prefix : "Production-model"
+  aws_region : "ap-northeast-3"

@@ -1,0 +1,120 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.log
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+*.env.bak
+
+# =========================
+# OS / Editor files
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# =========================
+# Airflow
+# =========================
+airflow.cfg
+logs/
+dags/__pycache__/
+dags/*.pyc
+plugins/__pycache__/
+scheduler/
+dag_processor_manager/
+# Airflow DB / Metadata
+airflow.db
+unittests.cfg
+
+# =========================
+# MLflow
+# =========================
+mlruns/
+mlflow.db
+mlartifacts/
+mlflow_tmp/
+
+# =========================
+# Data & Artifacts
+# =========================
+data/Flickr8k/Images/
+data/Flickr8k/artifacts/
+data/**/*.npy
+data/**/*.npz
+data/**/*.pt
+data/**/*.pth
+data/**/*.zip
+data/**/*.tar
+data/**/*.tar.gz
+data/**/*.jsonl
+*.h5
+*.ckpt
+*.pth
+*.pt
+*.bin
+*.weights
+
+# =========================
+# Model checkpoints / training outputs
+# =========================
+runs/
+checkpoints/
+outputs/
+wandb/
+tensorboard/
+*.ckpt
+*.pth
+*.pt
+
+# =========================
+# Terraform
+# =========================
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/terraform.tfstate
+infra/terraform.tfstate.*
+infra/terraform.tfvars
+infra/*.backup
+infra/.terraform.tfstate.lock.info
+
+# =========================
+# Docker
+# =========================
+*.pid
+*.tar
+*.bak
+docker-compose.override.yml
+
+# =========================
+# Misc / Temporary
+# =========================
+tmp/
+temp/
+.cache/
+*.tmp
+*.bak
+
+# =========================
+# Secrets / Credentials
+# =========================
+.env
+*.key
+*.pem
+*.crt
+*.json
+credentials/
+aws_credentials/

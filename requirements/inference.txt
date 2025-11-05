@@ -1,0 +1,11 @@
+fastapi==0.115.*
+uvicorn[standard]==0.30.*
+boto3==1.35.*
+botocore==1.35.*
+pillow==10.4.*
+numpy==2.1.*
+pydantic==2.9.*
+python-multipart
+torch
+torchvision  # if you use it
+torchaudio
