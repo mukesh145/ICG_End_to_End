@@ -11,7 +11,6 @@ ENV MODEL_DIR=/prod_model \
       TORCH_DEVICE=cpu \
       PORT=8000 
 
-  
   # OS deps for Pillow + healthcheck
 RUN apt-get update && apt-get install -y --no-install-recommends \
       libjpeg62-turbo zlib1g libpng16-16 libfreetype6 liblcms2-2 libwebp7 \
