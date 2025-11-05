@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1 \
 ENV MODEL_DIR=/prod_model \
       MODEL_POLL_SECONDS=120 \
       TORCH_DEVICE=cpu \
-      PORT=8000 \
+      PORT=8000 
 
   
   # OS deps for Pillow + healthcheck
