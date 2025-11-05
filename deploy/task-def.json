@@ -2,7 +2,7 @@
     "taskDefinitionArn": "arn:aws:ecs:ap-northeast-3:198696735120:task-definition/ICG-API-cluster",
     "containerDefinitions": [
         {
-            "name": "mnist-api",
+            "name": "ICG-API",
             "image": "198696735120.dkr.ecr.us-east-1.amazonaws.com/icg:latest",
             "cpu": 0,
             "portMappings": [
@@ -19,9 +19,9 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/mnist-api",
+                    "awslogs-group": "/ecs/ICG-API",
                     "awslogs-region": "ap-northeast-3",
-                    "awslogs-stream-prefix": "mnist-api"
+                    "awslogs-stream-prefix": "ICG-API"
                 }
             },
             "healthCheck": {
@@ -37,8 +37,8 @@
             "systemControls": []
         }
     ],
-    "family": "mnist-api-td",
-    "executionRoleArn": "arn:aws:iam::198696735120:role/mnist-api-exec-role",
+    "family": "ICG-API-td",
+    "executionRoleArn": "arn:aws:iam::198696735120:role/ICG-API-exec-role",
     "networkMode": "awsvpc",
     "revision": 6,
     "volumes": [],

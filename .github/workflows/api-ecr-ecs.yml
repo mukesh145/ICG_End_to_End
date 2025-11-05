@@ -50,7 +50,7 @@ jobs:
       - name: Build & push (multi-arch)
         uses: docker/build-push-action@v6
         with:
-          context: ./api
+          file: Dockerfile.api
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -85,7 +85,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: deploy/task-def.json  
-          container-name: mnist-api   
+          container-name: ICG-API
           image: ${{ env.IMAGE_URI }}:${{ env.IMAGE_TAG }}
 
       - name: Deploy to Amazon ECS
