@@ -17,15 +17,17 @@ env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
   ECR_REPO: ${{ vars.ECR_REPO }}
-  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}    
-  ECS_SERVICE: ${{ vars.ECS_SERVICE }}    
-  IMAGE_URI: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPO }}
+  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ vars.ECS_SERVICE }}
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   build-and-push:
     name: Build & Push API Image to ECR
     runs-on: ubuntu-latest
+    outputs:
+      image_uri: ${{ steps.compute.outputs.image_uri }}
+      image_ref: ${{ steps.compute.outputs.image_ref }}
 
     steps:
       - name: Checkout code
@@ -39,7 +41,6 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
-        id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Set up QEMU
@@ -47,7 +48,7 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Sanity check env
         run: |
           echo "AWS_ACCOUNT_ID='${AWS_ACCOUNT_ID}'"
@@ -57,29 +58,32 @@ jobs:
           test -n "$AWS_REGION" || (echo "AWS_REGION is empty" && exit 1)
           test -n "$ECR_REPO" || (echo "ECR_REPO is empty" && exit 1)
 
-      - name: Compute IMAGE_URI
+      - name: Compute image URI (no newlines)
+        id: compute
         run: |
-          echo "IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}" >> $GITHUB_ENV
+          IMAGE_URI="${{ format('{0}.dkr.ecr.{1}.amazonaws.com/{2}', env.AWS_ACCOUNT_ID, env.AWS_REGION, env.ECR_REPO) }}"
+          IMAGE_REF="${IMAGE_URI}:${{ env.IMAGE_TAG }}"
+          echo "image_uri=${IMAGE_URI}" >> "$GITHUB_OUTPUT"
+          echo "image_ref=${IMAGE_REF}" >> "$GITHUB_OUTPUT"
 
       - name: Build & push API image (multi-arch)
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile.api      # file path relative to repo root
+          file: ./Dockerfile.api
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ env.IMAGE_URI }}:${{ env.IMAGE_TAG }}
-            ${{ env.IMAGE_URI }}:latest
+            ${{ steps.compute.outputs.image_ref }}
+            ${{ steps.compute.outputs.image_uri }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
 
       - name: Output pushed image
         run: |
           echo "✅ Pushed:"
-          echo " - ${{ env.IMAGE_URI }}:${{ env.IMAGE_TAG }}"
-          echo " - ${{ env.IMAGE_URI }}:latest"
+          echo " - ${{ steps.compute.outputs.image_ref }}"
+          echo " - ${{ steps.compute.outputs.image_uri }}:latest"
 
   deploy-ecs:
     name: Deploy to ECS (rolling update)
@@ -101,9 +105,9 @@ jobs:
         id: render
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: deploy/task-def.json  
+          task-definition: deploy/task-def.json
           container-name: ICG-API
-          image: ${{ env.IMAGE_URI }}:${{ env.IMAGE_TAG }}
+          image: ${{ needs.build-and-push.outputs.image_ref }}
 
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
